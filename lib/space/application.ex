@@ -12,7 +12,8 @@ defmodule Space.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Space.PubSub},
       # Start the Endpoint (http/https)
-      SpaceWeb.Endpoint
+      SpaceWeb.Endpoint,
+      SpaceWeb.Presence
       # Start a worker by calling: Space.Worker.start_link(arg)
       # {Space.Worker, arg}
     ]

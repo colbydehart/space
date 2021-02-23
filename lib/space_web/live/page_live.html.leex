@@ -1,7 +1,10 @@
 <section class="row">
   <article class="column">
     <p>Welcome to <em>Space</em>.</p>
-    <label for="name">Name</label>
-    <input type="text" id="name">
+    <form phx-submit="change_name">
+      <label phx-value="name" for="name">Name</label>
+      <input type="text" id="name" name="name">
+      <button type="submit">Ok</submit>
+    </form>
   </article>
 </section>
