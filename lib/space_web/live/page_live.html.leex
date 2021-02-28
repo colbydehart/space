@@ -1,20 +1,18 @@
-<section class="row">
-  <article class="column">
-    <p>Welcome to <em>Space</em>.</p>
-    <%= if is_nil(@name) do %>
-      <form phx-submit="change_name">
-        <label phx-value="name" for="name">Name</label>
-        <input type="text" id="name" name="name">
-        <button type="submit">Ok</submit>
-      </form>
-    <% else %>
-      <div id="grid">
-      <%= for y <- 0..10, x <- 0..10 do  %>
+<section id="app">
+  <p>Welcome to <em>Space</em>.</p>
+  <%= if is_nil(@name) do %>
+    <form phx-submit="change_name">
+      <label phx-value="name" for="name">Name</label>
+      <input type="text" id="name" name="name">
+      <button type="submit">Ok</submit>
+    </form>
+  <% else %>
+    <div id="grid">
+      <%= for y <- 0..9, x <- 0..9 do  %>
         <div class="cell">
           <%= "#{x}, #{y}" %>
         </div>
       <% end %>
-      </div>
-    <% end %>
-  </article>
+    </div>
+  <% end %>
 </section>

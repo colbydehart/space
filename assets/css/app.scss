@@ -60,12 +60,15 @@ body {
   color: white;
 }
 
+$cell-size: 30px;
+
 #grid {
-  // TODO: css grid
-  display: flex;
-  flex-wrap: wrap;
+  width: $cell-size * 10;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(10, $grid-size);
+  grid-template-rows: repeat(10, $grid-size);
   .cell {
-    flex: 1;
-    width: 10%;
+    border: 1px solid black;
   }
 }
