@@ -8,11 +8,25 @@
     </form>
   <% else %>
     <div id="grid">
-      <%= for y <- 0..9, x <- 0..9 do  %>
+      <%= for x <- 0..9, y <- 0..9 do  %>
         <div class="cell">
-          <%= "#{x}, #{y}" %>
+          <%= if {x, y} === @pos, do: "X" %>
         </div>
       <% end %>
     </div>
+
+    <h3>Online</h3>
+    <ul>
+      <%= for user <- @users do %>
+        <li><%= user.name %></li>
+      <% end %>
+    </ul>
   <% end %>
+
+  <h3>Chat</h3>
+    <%= for message <- @messages do %>
+      <p>
+        <%= message.from %>: <%= message.text %>
+      </p>
+    <% end %>
 </section>

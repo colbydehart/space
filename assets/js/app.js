@@ -10,7 +10,6 @@ import "../css/app.scss"
 // Import deps with the dep name or local files with a relative path, for example:
 //
 //     import {Socket} from "phoenix"
-//     import socket from "./socket"
 //
 import "phoenix_html"
 import {Socket} from "phoenix"
@@ -21,8 +20,8 @@ let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("
 let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
 
 // Show progress bar on live navigation and form submits
-window.addEventListener("phx:page-loading-start", info => NProgress.start())
-window.addEventListener("phx:page-loading-stop", info => NProgress.done())
+window.addEventListener("phx:page-loading-start", _info => NProgress.start())
+window.addEventListener("phx:page-loading-stop", _info => NProgress.done())
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
