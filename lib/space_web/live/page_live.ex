@@ -11,8 +11,7 @@ defmodule SpaceWeb.PageLive do
     PubSub.subscribe(Space.PubSub, topic(socket))
     Presence.track(self(), topic(socket), "Colby", %{pos: {1, 3}})
 
-    {:ok, assign(socket, users: [], name: "colby", pos: {1, 3}),
-     temporary_assigns: [messages: []]}
+    {:ok, assign(socket, users: [], name: "colby", pos: {1, 3}, messages: [])}
   end
 
   @impl true
@@ -22,9 +21,16 @@ defmodule SpaceWeb.PageLive do
     Presence.track(self(), topic(socket), name, %{pos: pos})
 
     socket
-    |> assign(name: name)
-    |> assign(pos: pos)
+    |> assign(name: name, pos: pos)
     |> put_flash(:info, "name changed.")
+    |> noreply()
+  end
+
+  def handle_event("send_message", %{"message" => message}, socket) do
+    IO.inspect(messag)
+
+    socket
+    |> assign(:messages, [%{from: socket.assigns[:name], text: message}])
     |> noreply()
   end
 
@@ -35,8 +41,10 @@ defmodule SpaceWeb.PageLive do
       socket
       |> topic()
       |> Presence.list()
-      |> Enum.map(fn {name, %{metas: [data]}} ->
-        Map.put(data, :name, name)
+      |> Enum.map(fn {name, %{metas: metas}} ->
+        metas
+        |> List.first()
+        |> Map.put(:name, name)
       end)
 
     socket

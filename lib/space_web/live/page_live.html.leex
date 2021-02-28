@@ -24,9 +24,14 @@
   <% end %>
 
   <h3>Chat</h3>
+  <div id="chat" phx-update="append">
     <%= for message <- @messages do %>
-      <p>
-        <%= message.from %>: <%= message.text %>
-      </p>
+      <p><%= message.from %>: <%= message.text %></p>
     <% end %>
+  </div>
+  <form phx-submit="send_message">
+    <input type="text" id="message" name="message">
+    <button type="submit">Send</submit>
+  </form>
+
 </section>
