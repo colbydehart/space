@@ -8,7 +8,13 @@
         <button type="submit">Ok</submit>
       </form>
     <% else %>
-        Hi <%= @name %>
+      <div id="grid">
+      <%= for y <- 0..10, x <- 0..10 do  %>
+        <div class="cell">
+          <%= "#{x}, #{y}" %>
+        </div>
+      <% end %>
+      </div>
     <% end %>
   </article>
 </section>

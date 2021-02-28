@@ -59,3 +59,13 @@ body {
   background-color: #333;
   color: white;
 }
+
+#grid {
+  // TODO: css grid
+  display: flex;
+  flex-wrap: wrap;
+  .cell {
+    flex: 1;
+    width: 10%;
+  }
+}

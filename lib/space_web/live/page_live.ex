@@ -8,14 +8,13 @@ defmodule SpaceWeb.PageLive do
   @impl true
   @spec mount(map, map, Socket.t()) :: {:ok, Socket.t()}
   def mount(_params, _session, socket) do
-    PubSub.subscribe(Space.PubSub, topic(socket))
-    IO.inspect(socket.host_uri)
-    {:ok, assign(socket, grid: [], name: nil)}
+    {:ok, assign(socket, grid: [], name: "colby")}
   end
 
   @impl true
   def handle_event("change_name", %{"name" => name}, socket) do
     Presence.track(self(), topic(socket), name, %{})
+    PubSub.subscribe(Space.PubSub, topic(socket))
 
     socket
     |> assign(name: name)
@@ -25,8 +24,7 @@ defmodule SpaceWeb.PageLive do
 
   # Presence events
   @impl true
-  def handle_info(%{event: event, payload: payload, topic: topic}, socket) do
-    IO.inspect({event, payload, topic})
+  def handle_info(%{event: _, payload: _, topic: _}, socket) do
     noreply(socket)
   end
 
