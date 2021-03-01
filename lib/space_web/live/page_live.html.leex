@@ -4,7 +4,7 @@
     <form phx-submit="change_name">
       <label phx-value="name" for="name">Name</label>
       <input type="text" id="name" name="name">
-      <button type="submit">Ok</submit>
+      <button type="submit">Ok</button>
     </form>
   <% else %>
     <div id="grid">
@@ -24,14 +24,13 @@
   <% end %>
 
   <h3>Chat</h3>
-  <div id="chat" phx-update="append">
-    <%= for message <- @messages do %>
-      <p><%= message.from %>: <%= message.text %></p>
-    <% end %>
-  </div>
   <form phx-submit="send_message">
     <input type="text" id="message" name="message">
-    <button type="submit">Send</submit>
+    <button type="submit">Send</button>
   </form>
-
+  <div id="chat" phx-update="prepend">
+    <%= for message <- @messages do %>
+      <p id="<%= message.id %>"><%= message.text %></p>
+    <% end %>
+  </div>
 </section>

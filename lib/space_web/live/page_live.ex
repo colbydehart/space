@@ -11,7 +11,8 @@ defmodule SpaceWeb.PageLive do
     PubSub.subscribe(Space.PubSub, topic(socket))
     Presence.track(self(), topic(socket), "Colby", %{pos: {1, 3}})
 
-    {:ok, assign(socket, users: [], name: "colby", pos: {1, 3}, messages: [])}
+    {:ok, assign(socket, users: [], name: nil, pos: nil, messages: []),
+     temporary_assigns: [messages: []]}
   end
 
   @impl true
@@ -27,10 +28,13 @@ defmodule SpaceWeb.PageLive do
   end
 
   def handle_event("send_message", %{"message" => message}, socket) do
-    IO.inspect(messag)
+    PubSub.broadcast(
+      Space.PubSub,
+      topic(socket),
+      {:message, %{text: message, from: socket.assigns.name, id: UUID.uuid4()}}
+    )
 
     socket
-    |> assign(:messages, [%{from: socket.assigns[:name], text: message}])
     |> noreply()
   end
 
@@ -49,6 +53,12 @@ defmodule SpaceWeb.PageLive do
 
     socket
     |> assign(users: users)
+    |> noreply()
+  end
+
+  def handle_info({:message, message}, socket) do
+    socket
+    |> assign(:messages, [message])
     |> noreply()
   end
 
