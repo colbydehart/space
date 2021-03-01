@@ -1,6 +1,6 @@
 /* doing */
-assign random starting square
-render user in starting square
 
 /* todo */
-persistent chat log (stored in html)
+move
+custom color
+change ui to show up different
