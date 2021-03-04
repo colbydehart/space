@@ -7,8 +7,8 @@
       <button type="submit">Ok</button>
     </form>
   <% else %>
-    <div id="grid">
-      <%= for x <- 0..9, y <- 0..9 do  %>
+    <div id="grid" phx-window-keydown="move">
+      <%= for y <- 0..9, x <- 0..9 do  %>
         <div class="cell">
           <%= if {x, y} === @pos, do: "X" %>
         </div>

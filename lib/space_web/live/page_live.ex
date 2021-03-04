@@ -9,7 +9,6 @@ defmodule SpaceWeb.PageLive do
   @spec mount(map, map, Socket.t()) :: {:ok, Socket.t()}
   def mount(_params, _session, socket) do
     PubSub.subscribe(Space.PubSub, topic(socket))
-    Presence.track(self(), topic(socket), "Colby", %{pos: {1, 3}})
 
     {:ok, assign(socket, users: [], name: nil, pos: nil, messages: []),
      temporary_assigns: [messages: []]}
@@ -36,6 +35,23 @@ defmodule SpaceWeb.PageLive do
 
     socket
     |> noreply()
+  end
+
+  def handle_event("move", %{"key" => key}, socket) do
+    {x, y} = socket.assigns.pos
+
+    pos =
+      case key do
+        "ArrowDown" -> {x, min(y + 1, 9)}
+        "ArrowUp" -> {x, max(y - 1, 0)}
+        "ArrowLeft" -> {max(x - 1, 0), y}
+        "ArrowRight" -> {min(x + 1, 9), y}
+        _ -> {x, y}
+      end
+
+    socket
+    |> assign(pos: pos)
+    |> noreply
   end
 
   # Presence events
