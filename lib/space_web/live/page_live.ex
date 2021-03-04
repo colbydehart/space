@@ -15,14 +15,14 @@ defmodule SpaceWeb.PageLive do
   end
 
   @impl true
-  def handle_event("change_name", %{"name" => name}, socket) do
+  def handle_event("change_name", %{"name" => name, "color" => color}, socket) do
     # initial position
     pos = {rand_coord(), rand_coord()}
     Presence.track(self(), topic(socket), name, %{pos: pos})
 
     socket
-    |> assign(name: name, pos: pos)
-    |> put_flash(:info, "name changed.")
+    |> assign(name: name, pos: pos, color: color)
+    |> put_flash(:info, "Welcome #{name}")
     |> noreply()
   end
 
