@@ -18,7 +18,7 @@ defmodule SpaceWeb.PageLive do
   def handle_event("change_name", %{"name" => name, "color" => color}, socket) do
     # initial position
     pos = {rand_coord(), rand_coord()}
-    Presence.track(self(), topic(socket), name, %{pos: pos})
+    Presence.track(self(), topic(socket), name, %{pos: pos, color: color})
 
     socket
     |> assign(name: name, pos: pos, color: color)
@@ -49,6 +49,15 @@ defmodule SpaceWeb.PageLive do
         _ -> {x, y}
       end
 
+    self()
+    |> Presence.update(
+      topic(socket),
+      socket.assigns.name,
+      &Map.put(&1, :pos, pos)
+    )
+
+    PubSub.broadcast(Space.PubSub, topic(socket), :moved)
+
     socket
     |> assign(pos: pos)
     |> noreply
@@ -57,24 +66,20 @@ defmodule SpaceWeb.PageLive do
   # Presence events
   @impl true
   def handle_info(%{event: "presence_diff"}, socket) do
-    users =
-      socket
-      |> topic()
-      |> Presence.list()
-      |> Enum.map(fn {name, %{metas: metas}} ->
-        metas
-        |> List.first()
-        |> Map.put(:name, name)
-      end)
-
     socket
-    |> assign(users: users)
+    |> assign(users: get_users(socket))
     |> noreply()
   end
 
   def handle_info({:message, message}, socket) do
     socket
     |> assign(:messages, [message])
+    |> noreply()
+  end
+
+  def handle_info(:moved, socket) do
+    socket
+    |> assign(users: get_users(socket))
     |> noreply()
   end
 
@@ -85,4 +90,16 @@ defmodule SpaceWeb.PageLive do
   defp noreply(term), do: {:noreply, term}
 
   def rand_coord(), do: Enum.random(0..9)
+
+  @spec get_users(socket :: Phoenix.LiveView.Socket.t()) :: [Map]
+  defp get_users(socket) do
+    socket
+    |> topic()
+    |> Presence.list()
+    |> Enum.map(fn {name, %{metas: metas}} ->
+      metas
+      |> List.first()
+      |> Map.put(:name, name)
+    end)
+  end
 end

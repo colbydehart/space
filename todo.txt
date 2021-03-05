@@ -1,6 +1,5 @@
 /* doing */
-custom color
 
 /* todo */
-move
-change ui to show up different
+gleam
+tailwind
