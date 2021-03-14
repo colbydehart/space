@@ -1,7 +1,6 @@
 <% import SpaceWeb.LayoutView %>
 
 <section id="app">
-  <p>Welcome to <em>Space</em>.</p>
   <%= if is_nil(@name) do %>
     <form phx-submit="change_name">
       <label phx-value="name" for="name">Name</label>
@@ -13,35 +12,34 @@
   <% else %>
     <div id="grid" phx-window-keydown="move">
       <%= for y <- 0..9, x <- 0..9 do  %>
-        <div class="cell"
-          <%= if {x, y} === @pos do %>
-            style="background-color: <%= @color %>;"
-          <% else %>
-            style="background-color: <%= color_for_square({x,y}, @users) %>;"
-          <% end %>
-        >
-        </div>
+        <%= live_component @socket, SpaceWeb.Square, users: @users, pos: {x,y} %>
       <% end %>
     </div>
 
-    <h3>Online</h3>
-    <ul>
-      <%= for user <- @users do %>
-        <li><%= user.name %></li>
-      <% end %>
-    </ul>
-  <% end %>
-
-  <h3>Chat</h3>
-  <form phx-submit="send_message">
-    <input type="text" id="message" name="message">
-    <button type="submit">Send</button>
-  </form>
-  <div id="chat" phx-update="prepend">
-    <%= for message <- @messages do %>
-      <p id="<%= message.id %>">
-        <%= message.from %>: <%= message.text %>
-      </p>
-    <% end %>
+  <div id="chat">
+    <div class="main">
+      <h3>Chat</h3>
+      <div class="chat-messages" phx-update="prepend">
+        <%= for message <- @messages do %>
+          <p id="<%= message.id %>">
+          <%= message.from %>: <%= message.text %>
+          </p>
+        <% end %>
+      </div>
+      <form phx-submit="send_message">
+        <input type="text" id="message" name="message">
+        <button type="submit">Send</button>
+      </form>
+    </div>
+    <div class="sidebar">
+      <h3>Online</h3>
+      <ul>
+        <%= for user <- @users do %>
+          <li><%= user.name %></li>
+        <% end %>
+      </ul>
+    </div>
   </div>
+<% end %>
+
 </section>

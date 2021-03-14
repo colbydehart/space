@@ -1,5 +1,3 @@
 /* doing */
 
 /* todo */
-gleam
-tailwind

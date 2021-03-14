@@ -6,12 +6,25 @@ defmodule SpaceWeb.PageLive do
   @pubsub_topic ":space"
 
   @impl true
-  @spec mount(map, map, Socket.t()) :: {:ok, Socket.t()}
+  @spec mount(map, map, Socket.t()) :: {:ok, Socket.t(), keyword()}
   def mount(_params, _session, socket) do
     PubSub.subscribe(Space.PubSub, topic(socket))
 
-    {:ok, assign(socket, users: [], name: nil, pos: nil, messages: []),
-     temporary_assigns: [messages: []]}
+    # dev: remove
+    Presence.track(self(), topic(socket), "Colby", %{pos: {1, 1}, color: "#0fe"})
+
+    {:ok,
+     assign(socket,
+       users: [],
+       name: "Colby",
+       pos: {1, 1},
+       color: "#0FE"
+     ), temporary_assigns: [messages: []]}
+
+    # end dev
+
+    # {:ok, assign(socket, users: [], name: "Colby", pos: nil, messages: []),
+    #  temporary_assigns: [messages: []]}
   end
 
   @impl true
@@ -38,16 +51,7 @@ defmodule SpaceWeb.PageLive do
   end
 
   def handle_event("move", %{"key" => key}, socket) do
-    {x, y} = socket.assigns.pos
-
-    pos =
-      case key do
-        "ArrowDown" -> {x, min(y + 1, 9)}
-        "ArrowUp" -> {x, max(y - 1, 0)}
-        "ArrowLeft" -> {max(x - 1, 0), y}
-        "ArrowRight" -> {min(x + 1, 9), y}
-        _ -> {x, y}
-      end
+    pos = update_pos_by_input(socket.assigns.pos, key)
 
     self()
     |> Presence.update(
@@ -60,7 +64,7 @@ defmodule SpaceWeb.PageLive do
 
     socket
     |> assign(pos: pos)
-    |> noreply
+    |> noreply()
   end
 
   # Presence events
@@ -71,6 +75,7 @@ defmodule SpaceWeb.PageLive do
     |> noreply()
   end
 
+  # General Events
   def handle_info({:message, message}, socket) do
     socket
     |> assign(:messages, [message])
@@ -87,8 +92,10 @@ defmodule SpaceWeb.PageLive do
   @spec topic(Socket.t()) :: String.t()
   defp topic(socket), do: socket.host_uri.host <> @pubsub_topic
 
+  @spec noreply(term) :: {:noreply, term}
   defp noreply(term), do: {:noreply, term}
 
+  @spec rand_coord() :: non_neg_integer
   def rand_coord(), do: Enum.random(0..9)
 
   @spec get_users(socket :: Phoenix.LiveView.Socket.t()) :: [Map]
@@ -101,5 +108,17 @@ defmodule SpaceWeb.PageLive do
       |> List.first()
       |> Map.put(:name, name)
     end)
+  end
+
+  @type pos :: {non_neg_integer, non_neg_integer}
+  @spec update_pos_by_input(pos :: pos, key :: binary()) :: pos
+  def update_pos_by_input({x, y}, key) do
+    case key do
+      "ArrowDown" -> {x, min(y + 1, 9)}
+      "ArrowUp" -> {x, max(y - 1, 0)}
+      "ArrowLeft" -> {max(x - 1, 0), y}
+      "ArrowRight" -> {min(x + 1, 9), y}
+      _ -> {x, y}
+    end
   end
 end
