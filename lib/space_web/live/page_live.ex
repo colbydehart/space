@@ -7,17 +7,18 @@ defmodule SpaceWeb.PageLive do
 
   @impl true
   @spec mount(map, map, Socket.t()) :: {:ok, Socket.t(), keyword()}
-  def mount(_params, _session, socket) do
+  def mount(%{"x" => x, "y" => y}, _session, socket) do
+    {x, _} = Integer.parse(x)
+    {y, _} = Integer.parse(y)
     PubSub.subscribe(Space.PubSub, topic(socket))
-
     # dev: remove
-    Presence.track(self(), topic(socket), "Colby", %{pos: {1, 1}, color: "#0fe"})
+    Presence.track(self(), topic(socket), "Colby", %{pos: {x, y}, color: "#0fe"})
 
     {:ok,
      assign(socket,
        users: [],
        name: "Colby",
-       pos: {1, 1},
+       pos: {x, y},
        color: "#0FE"
      ), temporary_assigns: [messages: []]}
 
@@ -26,6 +27,8 @@ defmodule SpaceWeb.PageLive do
     # {:ok, assign(socket, users: [], name: "Colby", pos: nil, messages: []),
     #  temporary_assigns: [messages: []]}
   end
+
+  def mount(_params, session, socket), do: mount(%{"x" => 0, "y" => 0}, session, socket)
 
   @impl true
   def handle_event("change_name", %{"name" => name, "color" => color}, socket) do
@@ -36,17 +39,6 @@ defmodule SpaceWeb.PageLive do
     socket
     |> assign(name: name, pos: pos, color: color)
     |> put_flash(:info, "Welcome #{name}")
-    |> noreply()
-  end
-
-  def handle_event("send_message", %{"message" => message}, socket) do
-    PubSub.broadcast(
-      Space.PubSub,
-      topic(socket),
-      {:message, %{text: message, from: socket.assigns.name, id: UUID.uuid4()}}
-    )
-
-    socket
     |> noreply()
   end
 

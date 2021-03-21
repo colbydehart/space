@@ -2,20 +2,14 @@ defmodule SpaceWeb.Square do
   use Phoenix.LiveComponent
 
   def render(assigns) do
-    assigns.users
-    |> Enum.find(&(&1.pos == assigns.pos))
-    |> case do
-      nil ->
-        ~L"<div class=\"cell\"></div>"
-
-      user ->
-        assigns = Map.put(assigns, :user, user)
-
-        ~L"""
-        <div class="cell" style="background-color: <%= @user.color %>;">
-          <div class="tooltip"><%= @user.name %></div>
-        </div>
-        """
-    end
+    ~L"""
+    <% {x, y} = @user.pos %>
+    <div class="<%= if @is_me, do: "me", else: "" %> person" style="
+          grid-column: <%= x %> / <%= x + 1 %>;
+          grid-row-start: <%= y %> / <%= y + 1 %>;
+    ">
+    <div class="namebox"><%= @user.name %></div>
+    </div>
+    """
   end
 end

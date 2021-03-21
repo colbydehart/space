@@ -1,3 +1,8 @@
 /* doing */
+- make it an infinite space
+
 
 /* todo */
+- Make it so you can join without a name or color and view the grid and listen,
+  but when you pick a name you get a position and can chat.
+- track by id instead of name

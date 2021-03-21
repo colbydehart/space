@@ -10,36 +10,14 @@
       <button type="submit">Ok</button>
     </form>
   <% else %>
-    <div id="grid" phx-window-keydown="move">
-      <%= for y <- 0..9, x <- 0..9 do  %>
-        <%= live_component @socket, SpaceWeb.Square, users: @users, pos: {x,y} %>
+    <div id="space" phx-window-keydown="move">
+      <%= for user <- @users do  %>
+        <%= live_component @socket, SpaceWeb.Square, user: user, is_me: user.name === @name %>
       <% end %>
     </div>
-
-  <div id="chat">
-    <div class="main">
-      <h3>Chat</h3>
-      <div class="chat-messages" phx-update="prepend">
-        <%= for message <- @messages do %>
-          <p id="<%= message.id %>">
-          <%= message.from %>: <%= message.text %>
-          </p>
-        <% end %>
-      </div>
-      <form phx-submit="send_message">
-        <input type="text" id="message" name="message">
-        <button type="submit">Send</button>
-      </form>
-    </div>
-    <div class="sidebar">
-      <h3>Online</h3>
-      <ul>
-        <%= for user <- @users do %>
-          <li><%= user.name %></li>
-        <% end %>
-      </ul>
-    </div>
-  </div>
 <% end %>
-
+<pre>
+  position: <%= elem(@pos,0) %>, <%= elem(@pos,1) %>
+  name: <%= @name %>
+</pre>
 </section>
