@@ -1,3 +1,33 @@
 /* This file is for your main application css. */
-@import "../node_modules/nprogress/nprogress.css";
+@import "~nprogress/nprogress.css";
 
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #333;
+}
+
+#space {
+  display: grid;
+  background: black;
+  width: 400px;
+  height: 400px;
+  margin: auto;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
+  z-index: -1;
+
+  .person {
+    width: 40px;
+    height: 40px;
+    display: relative;
+    .namebox {
+      display: none;
+    }
+  }
+}
+
+pre {
+  color: white;
+}

@@ -19,5 +19,9 @@
 <pre>
   position: <%= elem(@pos,0) %>, <%= elem(@pos,1) %>
   name: <%= @name %>
+  users: 
+  <%= for user <- @users do %>
+  - name: <%= user.name %>; pos: <%= elem(user.pos,0) %>, <%= elem(user.pos,1) %>
+  <% end %>
 </pre>
 </section>

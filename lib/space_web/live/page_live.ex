@@ -16,7 +16,7 @@ defmodule SpaceWeb.PageLive do
 
     {:ok,
      assign(socket,
-       users: [],
+       users: get_users(socket),
        name: "Colby",
        pos: {x, y},
        color: "#0FE"
@@ -24,11 +24,11 @@ defmodule SpaceWeb.PageLive do
 
     # end dev
 
-    # {:ok, assign(socket, users: [], name: "Colby", pos: nil, messages: []),
+    # {:ok, assign(socket, users: get_users(socket), name: "Colby", pos: nil, messages: []),
     #  temporary_assigns: [messages: []]}
   end
 
-  def mount(_params, session, socket), do: mount(%{"x" => 0, "y" => 0}, session, socket)
+  def mount(_params, session, socket), do: mount(%{"x" => "0", "y" => "0"}, session, socket)
 
   @impl true
   def handle_event("change_name", %{"name" => name, "color" => color}, socket) do

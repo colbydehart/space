@@ -4,12 +4,15 @@ defmodule SpaceWeb.Square do
   def render(assigns) do
     ~L"""
     <% {x, y} = @user.pos %>
-    <div class="<%= if @is_me, do: "me", else: "" %> person" style="
-          grid-column: <%= x %> / <%= x + 1 %>;
-          grid-row-start: <%= y %> / <%= y + 1 %>;
-    ">
-    <div class="namebox"><%= @user.name %></div>
-    </div>
+    <span title="<%= @user.name %>">
+      <div class="<%= if @is_me, do: "me", else: "" %> person" style="
+            background-color: <%= @user.color %>;
+            grid-column-start: <%= x + 1 %>;
+            grid-column-end: span 1;
+            grid-row-start: <%= y + 1 %>;
+            grid-row-end: span 1;
+      "></div>
+    </span>
     """
   end
 end
