@@ -2,20 +2,21 @@
 
 <section id="app">
   <%= if is_nil(@name) do %>
-    <form phx-submit="change_name">
-      <label phx-value="name" for="name">Name</label>
-      <input type="text" id="name" name="name">
-      <label phx-value="color" for="color">Color</label>
-      <input type="color" id="color" name="color">
-      <button type="submit">Ok</button>
-    </form>
-  <% else %>
-    <div id="space" phx-window-keydown="move">
-      <%= for user <- @users do  %>
-        <%= live_component @socket, SpaceWeb.Square, user: user, is_me: user.name === @name %>
-      <% end %>
+    <div id="name-form">
+      <form phx-submit="change_name">
+        <label phx-value="name" for="name">Name</label>
+        <input type="text" id="name" name="name">
+        <label phx-value="color" for="color">Color</label>
+        <input type="color" id="color" name="color">
+        <button type="submit">Ok</button>
+      </form>
     </div>
 <% end %>
+<div id="space" phx-window-keydown="move" phx-hook="spaceHook">
+  <%= for user <- @users do  %>
+    <%= live_component @socket, SpaceWeb.Square, user: user, is_me: user.name === @name %>
+  <% end %>
+</div>
 <pre>
   position: <%= elem(@pos,0) %>, <%= elem(@pos,1) %>
   name: <%= @name %>

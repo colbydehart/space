@@ -3,52 +3,56 @@ defmodule SpaceWeb.PageLive do
   alias Phoenix.LiveView.Socket
   alias Phoenix.PubSub
   alias SpaceWeb.Presence
+  alias UUID
   @pubsub_topic ":space"
 
   @impl true
   @spec mount(map, map, Socket.t()) :: {:ok, Socket.t(), keyword()}
   def mount(%{"x" => x, "y" => y}, _session, socket) do
+    id = UUID.uuid4()
     {x, _} = Integer.parse(x)
     {y, _} = Integer.parse(y)
     PubSub.subscribe(Space.PubSub, topic(socket))
-    # dev: remove
-    Presence.track(self(), topic(socket), "Colby", %{pos: {x, y}, color: "#0fe"})
 
     {:ok,
-     assign(socket,
+     assign(
+       socket,
        users: get_users(socket),
-       name: "Colby",
+       name: nil,
        pos: {x, y},
-       color: "#0FE"
+       id: id,
+       messages: []
      ), temporary_assigns: [messages: []]}
-
-    # end dev
-
-    # {:ok, assign(socket, users: get_users(socket), name: "Colby", pos: nil, messages: []),
-    #  temporary_assigns: [messages: []]}
   end
 
   def mount(_params, session, socket), do: mount(%{"x" => "0", "y" => "0"}, session, socket)
 
   @impl true
   def handle_event("change_name", %{"name" => name, "color" => color}, socket) do
-    # initial position
-    pos = {rand_coord(), rand_coord()}
-    Presence.track(self(), topic(socket), name, %{pos: pos, color: color})
+    %{id: id, pos: pos} = socket.assigns
+
+    Presence.track(
+      self(),
+      topic(socket),
+      id,
+      %{pos: pos, color: color, name: name, id: id}
+    )
 
     socket
     |> assign(name: name, pos: pos, color: color)
-    |> put_flash(:info, "Welcome #{name}")
     |> noreply()
   end
 
-  def handle_event("move", %{"key" => key}, socket) do
+  def handle_event("move", %{"key" => key}, socket)
+      when key in ~w(ArrowDown ArrowLeft ArrowRight ArrowUp) do
     pos = update_pos_by_input(socket.assigns.pos, key)
+    # require IEx
+    # IEx.pry()
 
     self()
     |> Presence.update(
       topic(socket),
-      socket.assigns.name,
+      socket.assigns.id,
       &Map.put(&1, :pos, pos)
     )
 
@@ -58,6 +62,8 @@ defmodule SpaceWeb.PageLive do
     |> assign(pos: pos)
     |> noreply()
   end
+
+  def handle_event("move", _, socket), do: {:noreply, socket}
 
   # Presence events
   @impl true
@@ -95,11 +101,7 @@ defmodule SpaceWeb.PageLive do
     socket
     |> topic()
     |> Presence.list()
-    |> Enum.map(fn {name, %{metas: metas}} ->
-      metas
-      |> List.first()
-      |> Map.put(:name, name)
-    end)
+    |> Enum.map(fn {_, %{metas: metas}} -> List.first(metas) end)
   end
 
   @type pos :: {non_neg_integer, non_neg_integer}
