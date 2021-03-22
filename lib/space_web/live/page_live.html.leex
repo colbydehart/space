@@ -17,6 +17,7 @@
     <%= live_component @socket, SpaceWeb.Square, user: user, is_me: user.name === @name %>
   <% end %>
 </div>
+<audio hidden autoplay id="audio"></audio>
 <pre>
   position: <%= elem(@pos,0) %>, <%= elem(@pos,1) %>
   name: <%= @name %>
